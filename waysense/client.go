@@ -35,8 +35,10 @@ type metricWriter interface {
 Stat suffixes
 */
 const (
-	GuaugeThingType   = "g"
-	LocationThingType = "l"
+	GuaugeThingType    = "g"
+	GeohashThingType   = "geo"
+	LatitudeThingType  = "lat"
+	LongitudeThingType = "lon"
 )
 
 func newClient(addr, apiKey, apiSecret string) (*Client, error) {
@@ -118,7 +120,7 @@ func (c *Client) Close() error {
 }
 
 // Gauge measures the value of a metric at a particular time.
-func (c *Client) Gauge(thingId string, value float64) error {
+func (c *Client) SendGuage(thingId string, value float64) error {
 	thingValue := make(map[string]interface{})
 	thingValue[GuaugeThingType] = value
 
@@ -130,9 +132,22 @@ func (c *Client) Gauge(thingId string, value float64) error {
 	return c.sendThing(tm)
 }
 
-func (c *Client) Location(thingId string, geoHash string) error {
+func (c *Client) SendGeoHash(thingId string, geoHash string) error {
 	thingValue := make(map[string]interface{})
-	thingValue[LocationThingType] = geoHash
+	thingValue[GeohashThingType] = geoHash
+
+	tm := &ThingMetric{
+		ThingId:    thingId,
+		ThingValue: thingValue,
+	}
+
+	return c.sendThing(tm)
+}
+
+func (c *Client) SendLocation(thingId string, lat, lon float64) error {
+	thingValue := make(map[string]interface{})
+	thingValue[LatitudeThingType] = lat
+	thingValue[LongitudeThingType] = lon
 
 	tm := &ThingMetric{
 		ThingId:    thingId,

@@ -28,7 +28,7 @@ func TestClientSingle(t *testing.T) {
 	}
 	defer client.Close()
 
-	if err := client.Location("testid", "GFJR"); err != nil {
+	if err := client.SendGeoHash("testid", "GFJR"); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -45,7 +45,7 @@ func TestClientFlushBuffer(t *testing.T) {
 	i := 0
 	for i < bufferLength-1 {
 		id := fmt.Sprintf("test-%d", i)
-		if err := client.Location(id, "GFJR1"); err != nil {
+		if err := client.SendGeoHash(id, "GFJR1"); err != nil {
 			t.Fatal(err)
 		}
 		i += 1
