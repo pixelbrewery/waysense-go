@@ -4,7 +4,7 @@ Package `waysense` provides a Go waysense client.
 
 ## Get the code
 
-    $ go get github.com/pixelbrewery/waysense-go/statsd
+    $ go get github.com/pixelbrewery/waysense-go/waysense
 
 ## Usage
 ```go
