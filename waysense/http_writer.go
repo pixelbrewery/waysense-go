@@ -24,8 +24,6 @@ type HttpResponse struct {
 	Result string `json:"result"`
 }
 
-const DefaultURL = "https://api-prod.pixelbrewery.co/v1/waysense/write"
-
 // TODO might want to change this to udp
 // timeout in duration form like 1s, 1m, 1h
 func newHttpWriter(addr, apiKey, apiSecret, timeout string, skipSSL bool) (*httpWriter, error) {
