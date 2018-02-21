@@ -49,14 +49,13 @@ func newHttpWriter(addr, apiKey, apiSecret, timeout string, skipSSL bool) (*http
 		Transport: tr,
 	}
 
-	apiURL := DefaultURL
-	if addr != "" {
-		apiURL = addr
+	if addr == "" {
+		return nil, fmt.Errorf("You must provide API url!")
 	}
 
 	return &httpWriter{
 		client:    httpClient,
-		url:       apiURL,
+		url:       addr,
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
 	}, nil
