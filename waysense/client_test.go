@@ -1,4 +1,5 @@
 //  Copyright © 2018 Pixel Brewery Co. All rights reserved.
+
 package waysense
 
 import (
