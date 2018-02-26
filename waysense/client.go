@@ -18,11 +18,11 @@ type Client struct {
 	sync.Mutex
 }
 
+// use short key names to reduce payload size
 type ThingMetric struct {
-	ThingId          string
-	ThingDescription string
-	ThingValue       map[string]interface{}
-	Time             int64
+	ThingId    string                 `json:"id"`
+	ThingValue map[string]interface{} `json:"v"`
+	Time       int64                  `json:"t"`
 }
 
 type metricWriter interface {
@@ -35,10 +35,10 @@ type metricWriter interface {
 Stat suffixes
 */
 const (
-	GuaugeThingType    = "g"
-	GeohashThingType   = "geo"
-	LatitudeThingType  = "lat"
-	LongitudeThingType = "lon"
+	ThingTypeGuage   = "gua"
+	ThingTypeGeohash = "geo"
+	ThingTypeLat     = "lat"
+	ThingTypeLon     = "lon"
 )
 
 func newClient(addr, apiKey, apiSecret string) (*Client, error) {
@@ -122,7 +122,7 @@ func (c *Client) Close() error {
 // Gauge measures the value of a metric at a particular time.
 func (c *Client) SendGuage(thingId string, value float64) error {
 	thingValue := make(map[string]interface{})
-	thingValue[GuaugeThingType] = value
+	thingValue[ThingTypeGuage] = value
 
 	tm := &ThingMetric{
 		ThingId:    thingId,
@@ -134,7 +134,7 @@ func (c *Client) SendGuage(thingId string, value float64) error {
 
 func (c *Client) SendGeoHash(thingId string, geoHash string) error {
 	thingValue := make(map[string]interface{})
-	thingValue[GeohashThingType] = geoHash
+	thingValue[ThingTypeGeohash] = geoHash
 
 	tm := &ThingMetric{
 		ThingId:    thingId,
@@ -146,8 +146,8 @@ func (c *Client) SendGeoHash(thingId string, geoHash string) error {
 
 func (c *Client) SendLocation(thingId string, lat, lon float64) error {
 	thingValue := make(map[string]interface{})
-	thingValue[LatitudeThingType] = lat
-	thingValue[LongitudeThingType] = lon
+	thingValue[ThingTypeLat] = lat
+	thingValue[ThingTypeLon] = lon
 
 	tm := &ThingMetric{
 		ThingId:    thingId,
