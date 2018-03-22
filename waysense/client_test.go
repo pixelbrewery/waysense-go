@@ -21,7 +21,7 @@ func assertNotPanics(t *testing.T, f func()) {
 	f()
 }
 
-func TestClientSingle(t *testing.T) {
+func TestClientSingleGeo(t *testing.T) {
 	testUrl := TestAddress
 	client, err := NewTest(testUrl, "", "")
 	if err != nil {
@@ -29,7 +29,22 @@ func TestClientSingle(t *testing.T) {
 	}
 	defer client.Close()
 
-	if err := client.SendGeoHash("testid", "GFJR"); err != nil {
+	if err := client.SendGeoHash("testid", "GFJR", nil); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestClientSingleGuage(t *testing.T) {
+	testUrl := TestAddress
+	client, err := NewTest(testUrl, "", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer client.Close()
+
+	thingValue := map[string]interface{}{"waysense.memory": 10.0}
+	thingTag := map[string]string{"company": "waysense"}
+	if err := client.SendGuage("testid", thingValue, thingTag); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -46,7 +61,7 @@ func TestClientFlushBuffer(t *testing.T) {
 	i := 0
 	for i < bufferLength-1 {
 		id := fmt.Sprintf("test-%d", i)
-		if err := client.SendGeoHash(id, "GFJR1"); err != nil {
+		if err := client.SendGeoHash(id, "GFJR1", nil); err != nil {
 			t.Fatal(err)
 		}
 		i += 1

@@ -22,6 +22,7 @@ type Client struct {
 type ThingMetric struct {
 	ThingId    string                 `json:"id"`
 	ThingValue map[string]interface{} `json:"v"`
+	ThingTag   map[string]string      `json:"tag"`
 	Time       int64                  `json:"t"`
 }
 
@@ -35,7 +36,6 @@ type metricWriter interface {
 Stat suffixes
 */
 const (
-	ThingTypeGuage   = "gua"
 	ThingTypeGeohash = "geo"
 	ThingTypeLat     = "lat"
 	ThingTypeLon     = "lon"
@@ -119,39 +119,53 @@ func (c *Client) Close() error {
 	return nil
 }
 
-// Gauge measures the value of a metric at a particular time.
-func (c *Client) SendGuage(thingId string, value float64) error {
-	thingValue := make(map[string]interface{})
-	thingValue[ThingTypeGuage] = value
+// Gauge measures the value of a metric at a particular time
+// ex> 	thingValue := map[string]interface{}{"waysense.memory": 10.0}
+// ex> 	thingTag := map[string]string{"company": "waysense"}
+func (c *Client) SendGuage(thingId string, thingValue map[string]interface{}, tag map[string]string) error {
+	if tag == nil {
+		tag = make(map[string]string)
+	}
 
 	tm := &ThingMetric{
 		ThingId:    thingId,
 		ThingValue: thingValue,
+		ThingTag:   tag,
 	}
 
 	return c.sendThing(tm)
 }
 
-func (c *Client) SendGeoHash(thingId string, geoHash string) error {
+func (c *Client) SendGeoHash(thingId string, geoHash string, tag map[string]string) error {
 	thingValue := make(map[string]interface{})
 	thingValue[ThingTypeGeohash] = geoHash
 
+	if tag == nil {
+		tag = make(map[string]string)
+	}
+
 	tm := &ThingMetric{
 		ThingId:    thingId,
 		ThingValue: thingValue,
+		ThingTag:   tag,
 	}
 
 	return c.sendThing(tm)
 }
 
-func (c *Client) SendLocation(thingId string, lat, lon float64) error {
+func (c *Client) SendLocation(thingId string, lat, lon float64, tag map[string]string) error {
 	thingValue := make(map[string]interface{})
 	thingValue[ThingTypeLat] = lat
 	thingValue[ThingTypeLon] = lon
 
+	if tag == nil {
+		tag = make(map[string]string)
+	}
+
 	tm := &ThingMetric{
 		ThingId:    thingId,
 		ThingValue: thingValue,
+		ThingTag:   tag,
 	}
 
 	return c.sendThing(tm)
