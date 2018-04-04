@@ -36,6 +36,7 @@ type metricWriter interface {
 Stat suffixes
 */
 const (
+	HttpEndpoint     = "https://api-prod.pixelbrewery.co/v1/waysense/write"
 	ThingTypeGeohash = "geo"
 	ThingTypeLat     = "lat"
 	ThingTypeLon     = "lon"
@@ -50,7 +51,11 @@ func newClient(addr, apiKey, apiSecret string) (*Client, error) {
 	return client, err
 }
 
-func New(addr, apiKey, apiSecret string) (*Client, error) {
+func New(apiKey, apiSecret string) (*Client, error) {
+	return NewBuffered(HttpEndpoint, apiKey, apiSecret, 10, time.Duration(time.Second*30))
+}
+
+func NewWithEndpoint(addr, apiKey, apiSecret string) (*Client, error) {
 	return NewBuffered(addr, apiKey, apiSecret, 10, time.Duration(time.Second*30))
 }
 
