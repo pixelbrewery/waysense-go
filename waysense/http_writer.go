@@ -71,8 +71,8 @@ func (w *httpWriter) Write(data []byte) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	req.Header.Set("waysense.api.key", w.apiKey)
-	req.Header.Set("waysense.api.secret", w.apiKey)
+	req.Header.Set("x-waysense-api-key", w.apiKey)
+	req.Header.Set("x-waysense-api-secret", w.apiKey)
 
 	resp, err := w.client.Do(req)
 	if err != nil {
