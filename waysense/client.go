@@ -207,14 +207,18 @@ func (c *Client) appendThing(thingMetric *ThingMetric) error {
 
 // should always send this on mutex lock
 func (c *Client) flushBuffer() error {
-	d, err := json.Marshal(c.things)
-	if err != nil {
-		return nil
-	}
+	var err error
 
-	_, err = c.writer.Write(d)
-
+	// should only flush when there are things
 	if len(c.things) > 0 {
+		var thingsData []byte
+
+		thingsData, err = json.Marshal(c.things)
+		if err != nil {
+			return nil
+		}
+
+		_, err = c.writer.Write(thingsData)
 		c.things = c.things[:0]
 	}
 
