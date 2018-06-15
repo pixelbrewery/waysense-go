@@ -43,7 +43,7 @@ const (
 )
 
 func newClient(addr, apiKey, apiSecret string) (*Client, error) {
-	w, err := newHttpWriter(addr, apiKey, apiSecret, "30s", false)
+	w, err := newHttpWriter(addr, apiKey, apiSecret, "30s", true)
 	if err != nil {
 		return nil, err
 	}
