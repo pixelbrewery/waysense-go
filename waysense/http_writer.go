@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"time"
 )
@@ -24,11 +25,37 @@ type HttpResponse struct {
 	Result string `json:"result"`
 }
 
+var (
+	// TLSDialTimeout is the maximum amount of time a dial will wait for a connect
+	// to complete.
+	TLSDialTimeout      = 20 * time.Second
+	TLSHandshakeTimeout = 10 * time.Second
+	// HTTPClientTimeout specifies a time limit for requests made by the
+	// HTTPClient. The timeout includes connection time, any redirects,
+	// and reading the response body.
+	HTTPClientTimeout = 60 * time.Second
+	// TCPKeepAlive specifies the keep-alive period for an active network
+	// connection. If zero, keep-alives are not enabled.
+	TCPKeepAlive = 60 * time.Second
+
+	// TCPIdleTimeOut is the maximum amount of time an idle
+	// (keep-alive) connection will remain idle before closing
+	// itself.
+	// Zero means no limit.
+	TCPIdleTimeOut = 0 * time.Second
+)
+
 // TODO might want to change this to udp
 // timeout in duration form like 1s, 1m, 1h
 func newHttpWriter(addr, apiKey, apiSecret, timeout string, skipSSL bool) (*httpWriter, error) {
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: skipSSL},
+		Dial: (&net.Dialer{
+			Timeout:   TLSDialTimeout,
+			KeepAlive: TCPKeepAlive,
+		}).Dial,
+		TLSClientConfig:     &tls.Config{InsecureSkipVerify: skipSSL},
+		TLSHandshakeTimeout: TLSHandshakeTimeout,
+		IdleConnTimeout:     TCPIdleTimeOut,
 	}
 
 	var to time.Duration
@@ -36,10 +63,10 @@ func newHttpWriter(addr, apiKey, apiSecret, timeout string, skipSSL bool) (*http
 	if timeout != "" {
 		to, err = time.ParseDuration(timeout)
 		if err != nil {
-			to, _ = time.ParseDuration("30s")
+			to, _ = time.ParseDuration("20s")
 		}
 	} else {
-		to, _ = time.ParseDuration("30s")
+		to, _ = time.ParseDuration("20s")
 	}
 
 	httpClient := &http.Client{
