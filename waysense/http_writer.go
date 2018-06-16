@@ -25,37 +25,19 @@ type HttpResponse struct {
 	Result string `json:"result"`
 }
 
-var (
-	// TLSDialTimeout is the maximum amount of time a dial will wait for a connect
-	// to complete.
-	TLSDialTimeout      = 20 * time.Second
-	TLSHandshakeTimeout = 10 * time.Second
-	// HTTPClientTimeout specifies a time limit for requests made by the
-	// HTTPClient. The timeout includes connection time, any redirects,
-	// and reading the response body.
-	HTTPClientTimeout = 60 * time.Second
-	// TCPKeepAlive specifies the keep-alive period for an active network
-	// connection. If zero, keep-alives are not enabled.
-	TCPKeepAlive = 60 * time.Second
-
-	// TCPIdleTimeOut is the maximum amount of time an idle
-	// (keep-alive) connection will remain idle before closing
-	// itself.
-	// Zero means no limit.
-	TCPIdleTimeOut = 0 * time.Second
-)
-
 // TODO might want to change this to udp
 // timeout in duration form like 1s, 1m, 1h
 func newHttpWriter(addr, apiKey, apiSecret, timeout string, skipSSL bool) (*httpWriter, error) {
 	tr := &http.Transport{
 		Dial: (&net.Dialer{
-			Timeout:   TLSDialTimeout,
-			KeepAlive: TCPKeepAlive,
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
 		}).Dial,
-		TLSClientConfig:     &tls.Config{InsecureSkipVerify: skipSSL},
-		TLSHandshakeTimeout: TLSHandshakeTimeout,
-		IdleConnTimeout:     TCPIdleTimeOut,
+		TLSClientConfig:       &tls.Config{InsecureSkipVerify: skipSSL},
+		TLSHandshakeTimeout:   10 * time.Second,
+		ResponseHeaderTimeout: 10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+		IdleConnTimeout:       0 * time.Second,
 	}
 
 	var to time.Duration
