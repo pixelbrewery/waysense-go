@@ -36,10 +36,20 @@ type metricWriter interface {
 Stat suffixes
 */
 const (
-	HttpEndpoint     = "https://api-prod.pixelbrewery.co/v1/waysense/write"
+	HttpEndpoint = "https://api-prod.pixelbrewery.co/v1/waysense/write"
+
+	// spot: thing
 	ThingTypeGeohash = "geo"
 	ThingTypeLat     = "lat"
 	ThingTypeLon     = "lon"
+
+	// site: thing
+	ThingSiteId      = "site-id"
+	ThingSiteGeohash = "site-geo"
+
+	// zone: thing
+	ThingZoneId      = "zone-id"
+	ThingZoneGeohash = "zone-geo"
 )
 
 func newClient(addr, apiKey, apiSecret string) (*Client, error) {
@@ -162,6 +172,42 @@ func (c *Client) SendLocation(thingId string, lat, lon float64, tag map[string]s
 	thingValue := make(map[string]interface{})
 	thingValue[ThingTypeLat] = lat
 	thingValue[ThingTypeLon] = lon
+
+	if tag == nil {
+		tag = make(map[string]string)
+	}
+
+	tm := &ThingMetric{
+		ThingId:    thingId,
+		ThingValue: thingValue,
+		ThingTag:   tag,
+	}
+
+	return c.sendThing(tm)
+}
+
+func (c *Client) SendSite(thingId, siteId, siteGeohash string, tag map[string]string) error {
+	thingValue := make(map[string]interface{})
+	thingValue[ThingSiteId] = siteId
+	thingValue[ThingTypeGeohash] = siteGeohash
+
+	if tag == nil {
+		tag = make(map[string]string)
+	}
+
+	tm := &ThingMetric{
+		ThingId:    thingId,
+		ThingValue: thingValue,
+		ThingTag:   tag,
+	}
+
+	return c.sendThing(tm)
+}
+
+func (c *Client) SendZone(thingId, zoneId, zoneGeohash string, tag map[string]string) error {
+	thingValue := make(map[string]interface{})
+	thingValue[ThingZoneId] = zoneId
+	thingValue[ThingZoneGeohash] = zoneGeohash
 
 	if tag == nil {
 		tag = make(map[string]string)
