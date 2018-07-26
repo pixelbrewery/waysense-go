@@ -39,9 +39,9 @@ const (
 	HttpEndpoint = "https://api-prod.pixelbrewery.co/v1/waysense/write"
 
 	// spot: thing
-	ThingTypeGeohash = "geo"
-	ThingTypeLat     = "lat"
-	ThingTypeLon     = "lon"
+	ThingSpotGeohash = "geo"
+	ThingSpotLat     = "lat"
+	ThingSpotLon     = "lon"
 
 	// site: thing
 	ThingSiteId      = "site-id"
@@ -151,9 +151,9 @@ func (c *Client) SendGuage(thingId string, thingValue map[string]interface{}, ta
 	return c.sendThing(tm)
 }
 
-func (c *Client) SendGeoHash(thingId string, geoHash string, tag map[string]string) error {
+func (c *Client) SendSpotGeoHash(thingId string, geoHash string, tag map[string]string) error {
 	thingValue := make(map[string]interface{})
-	thingValue[ThingTypeGeohash] = geoHash
+	thingValue[ThingSpotGeohash] = geoHash
 
 	if tag == nil {
 		tag = make(map[string]string)
@@ -168,10 +168,10 @@ func (c *Client) SendGeoHash(thingId string, geoHash string, tag map[string]stri
 	return c.sendThing(tm)
 }
 
-func (c *Client) SendLocation(thingId string, lat, lon float64, tag map[string]string) error {
+func (c *Client) SendSpotLocation(thingId string, lat, lon float64, tag map[string]string) error {
 	thingValue := make(map[string]interface{})
-	thingValue[ThingTypeLat] = lat
-	thingValue[ThingTypeLon] = lon
+	thingValue[ThingSpotLat] = lat
+	thingValue[ThingSpotLon] = lon
 
 	if tag == nil {
 		tag = make(map[string]string)
@@ -189,7 +189,7 @@ func (c *Client) SendLocation(thingId string, lat, lon float64, tag map[string]s
 func (c *Client) SendSite(thingId, siteId, siteGeohash string, tag map[string]string) error {
 	thingValue := make(map[string]interface{})
 	thingValue[ThingSiteId] = siteId
-	thingValue[ThingTypeGeohash] = siteGeohash
+	thingValue[ThingSiteGeohash] = siteGeohash
 
 	if tag == nil {
 		tag = make(map[string]string)

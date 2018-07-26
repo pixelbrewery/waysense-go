@@ -29,7 +29,7 @@ func TestClientSingleGeo(t *testing.T) {
 	}
 	defer client.Close()
 
-	if err := client.SendGeoHash("testid", "GFJR", nil); err != nil {
+	if err := client.SendSpotGeoHash("testid", "GFJR", nil); err != nil {
 		t.Fatal(err)
 	}
 }
@@ -61,7 +61,7 @@ func TestClientFlushBuffer(t *testing.T) {
 	i := 0
 	for i < bufferLength-1 {
 		id := fmt.Sprintf("test-%d", i)
-		if err := client.SendGeoHash(id, "GFJR1", nil); err != nil {
+		if err := client.SendSpotGeoHash(id, "GFJR1", nil); err != nil {
 			t.Fatal(err)
 		}
 		i += 1
