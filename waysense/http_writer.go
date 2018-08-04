@@ -82,6 +82,8 @@ func (w *httpWriter) Write(data []byte) (int, error) {
 	}
 	req.Header.Set("x-waysense-api-key", w.apiKey)
 	req.Header.Set("x-waysense-api-secret", w.apiSecret)
+	// make sure to close since clients may not re-use the connection
+	req.Close = true
 
 	resp, err := w.client.Do(req)
 	if err != nil {
